@@ -3,7 +3,7 @@ ItemStream.mt = {__index = ItemStream}
 
 function ItemStream.new(item, count, stride, path, t)
   local new = {
-    offset = 0,
+    offset = 0, -- TODO ?
     item = item,
     count = count,
     stride = stride,
@@ -29,11 +29,18 @@ function ItemStream.draw(self, i)
     love.graphics.line(x, y - 10, x, y + 10)
     love.graphics.print(i, x - 5, y + 15)
   end
-  love.graphics.setColor(self.r, self.g, self.b)
+  if DEBUG then
+    love.graphics.setColor(self.r, self.g, self.b)
+  else
+    love.graphics.setColor(1, 1, 1)
+  end
   for i = 0, self.count - 1 do
     if 0 < t then
       x, y = self.path:at(t)
-      love.graphics.circle('fill', x, y, .5 * self.item.len)
+      self.item.quad:draw(2, x, y)
+      if DEBUG then
+        love.graphics.circle('line', x, y, .5 * self.item.len)
+      end
     end
     t = t - self.stride / self.path.len
   end
@@ -64,7 +71,7 @@ function ItemStream.update(self, dt, tMax, previous) -- tMax = previous:tMin()
   end
   -- TODO erreur d'arrondi, thx lua
   debug('JAMMED = %d', jammed)
-  if previous and previous.item.len == self.item.len then
+  if previous and previous.item:equals(self.item) then
     debug('MERGE', jammed)
     -- ils peuvent être concaténés avec l'itemStream précédent
     previous.count = previous.count + jammed

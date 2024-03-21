@@ -71,8 +71,10 @@ function Conveyor._updateDelta(self)
 end
 
 function Conveyor.spawn(self)
-  local item = Item.new(8 + 4 * math.random(0, 1))
-  local itemStream = ItemStream.new(item, 7, 15 + math.random(0, 10), self.path, 0)
+  local item = Item.new()
+  local stride = item.len * math.random(1, 3)
+  local count = 5 + math.random(0, 10)
+  local itemStream = ItemStream.new(item, count, stride, self.path, 0)
   table.insert(self.itemStreams, itemStream)
 end
 
